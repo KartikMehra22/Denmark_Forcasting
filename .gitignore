@@ -1,0 +1,15 @@
+.venv/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+data/
+results/
+reports/
+*.pt
+*.npz
+*.npy
+*.bundle
+*.log
+.env
+.env.*
