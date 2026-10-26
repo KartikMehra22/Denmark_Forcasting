@@ -45,3 +45,18 @@ def get(url, params):
     raise RuntimeError("gave up after 8 retries")
 
 
+def fetch(dataset, start, end, price_area=None, page=10000):
+    rows, offset = [], 0
+    while True:
+        params = {"start": start, "end": end, "limit": page, "offset": offset}
+        if price_area:
+            params["filter"] = json.dumps({"PriceArea": price_area})
+        recs = get(f"{BASE}/{dataset}", params).json().get("records", [])
+        rows.extend(recs)
+        print(f"  {dataset}: {len(rows)} rows so far")
+        if len(recs) < page:
+            break
+        offset += page
+    return pd.DataFrame(rows)
+
+
