@@ -20,3 +20,28 @@ MIN_GAP = 2.0  # seconds between any two requests
 _last = [0.0]
 
 
+def get(url, params):
+    """GET with a global throttle and retries on 429/5xx (honours Retry-After)."""
+    for attempt in range(8):
+        wait = MIN_GAP - (time.time() - _last[0])
+        if wait > 0:
+            time.sleep(wait)
+        try:
+            r = requests.get(url, params=params, timeout=300)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as exc:
+            delay = min(10 * 2 ** attempt, 120)
+            print(f"  network error ({type(exc).__name__}); waiting {delay}s (attempt {attempt + 1}/8)")
+            time.sleep(delay)
+            continue
+        _last[0] = time.time()
+        if r.status_code in (429, 500, 502, 503, 504):
+            ra = r.headers.get("Retry-After", "")
+            delay = float(ra) if ra.replace(".", "", 1).isdigit() else min(10 * 2 ** attempt, 120)
+            print(f"  HTTP {r.status_code}; waiting {delay:.0f}s (attempt {attempt + 1}/8)")
+            time.sleep(delay)
+            continue
+        r.raise_for_status()
+        return r
+    raise RuntimeError("gave up after 8 retries")
+
+
