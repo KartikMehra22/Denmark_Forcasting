@@ -65,3 +65,30 @@ def time_col(df):
     return cols[0] if cols else None
 
 
+def summarize(name, df):
+    print(f"\n=== {name} ===")
+    if df.empty:
+        print("No rows returned.")
+        return
+    print("rows:", len(df))
+    print("columns:", list(df.columns))
+    tc = time_col(df)
+    if tc:
+        df = df.assign(_t=pd.to_datetime(df[tc]))
+        print("range:", df["_t"].min(), "->", df["_t"].max())
+        groups = df.groupby("PriceArea") if "PriceArea" in df.columns else [("all", df)]
+        for area, g in groups:
+            step = g["_t"].sort_values().diff().dropna()
+            mode = step.mode().iloc[0] if len(step) else "n/a"
+            gaps = int((step > mode).sum()) if len(step) else 0
+            print(f"  {area}: {len(g)} rows, step {mode}, gaps larger than step: {gaps}")
+    miss = df.isna().sum()
+    print("columns with missing values:\n", miss[miss > 0].to_string() if (miss > 0).any() else " none")
+
+
+PROD = ["CentralPowerMWh", "LocalPowerMWh", "CommercialPowerMWh", "OffshoreWindLt100MW_MWh",
+        "OffshoreWindGe100MW_MWh", "OnshoreWindLt50kW_MWh", "OnshoreWindGe50kW_MWh", "HydroPowerMWh",
+        "SolarPowerLt10kW_MWh", "SolarPowerGe10Lt40kW_MWh", "SolarPowerGe40kW_MWh",
+        "SolarPowerSelfConMWh", "UnknownProdMWh", "LocalPowerSelfConMWh"]
+
+
