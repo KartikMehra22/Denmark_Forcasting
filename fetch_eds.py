@@ -60,3 +60,8 @@ def fetch(dataset, start, end, price_area=None, page=10000):
     return pd.DataFrame(rows)
 
 
+def time_col(df):
+    cols = [c for c in df.columns if "utc" in c.lower()]
+    return cols[0] if cols else None
+
+
