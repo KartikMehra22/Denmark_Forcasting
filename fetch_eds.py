@@ -92,3 +92,19 @@ PROD = ["CentralPowerMWh", "LocalPowerMWh", "CommercialPowerMWh", "OffshoreWindL
         "SolarPowerSelfConMWh", "UnknownProdMWh", "LocalPowerSelfConMWh"]
 
 
+def balance_check(df, label):
+    """Test: GrossConsumptionMWh = sum(production incl. self-consumption) + sum(signed exchanges)?"""
+    need = [c for c in PROD if c != "LocalPowerSelfConMWh"] + ["GrossConsumptionMWh"]
+    if not set(need) <= set(df.columns):
+        return
+    prod = [c for c in PROD if c in df.columns]
+    exch = [c for c in df.columns if c.startswith("Exchange")]
+    d = df.copy()
+    d["resid"] = d["GrossConsumptionMWh"] - (d[prod].fillna(0).sum(axis=1) + d[exch].fillna(0).sum(axis=1))
+    print(f"\n--- Energy balance check: {label} ---")
+    for area, g in d.groupby("PriceArea"):
+        a = g["resid"].abs()
+        print(f"  {area}: |residual| median {a.median():.4f}, 99th pct {a.quantile(.99):.4f}, "
+              f"max {a.max():.4f} MWh; hours with |residual| < 0.01: {(a < 0.01).mean():.1%}")
+
+
