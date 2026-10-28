@@ -108,3 +108,58 @@ def balance_check(df, label):
               f"max {a.max():.4f} MWh; hours with |residual| < 0.01: {(a < 0.01).mean():.1%}")
 
 
+def main():
+    force = "--force" in sys.argv
+    os.makedirs(OUT, exist_ok=True)
+    now = pd.Timestamp.now().strftime("%Y-%m-%dT00:00")
+    jobs = [  # (label, dataset, start, end, price_area)
+        ("production_consumption", "ProductionConsumptionSettlement", "2025-10-01T00:00", now, None),
+        ("production_consumption_history", "ProductionConsumptionSettlement", "2022-01-01T00:00", "2025-10-01T00:00", None),
+        ("dayahead_DK1", "DayAheadPrices", "2025-10-01T00:00", now, "DK1"),
+        ("dayahead_DK2", "DayAheadPrices", "2025-10-01T00:00", now, "DK2"),
+        ("elspot_DK1_history", "Elspotprices", "2022-01-01T00:00", "2025-10-01T00:00", "DK1"),
+        ("elspot_DK2_history", "Elspotprices", "2022-01-01T00:00", "2025-10-01T00:00", "DK2"),
+    ]
+    frames = {}
+    for label, ds, s, e, area in jobs:
+        path = f"{OUT}/{label}.csv"
+        try:
+            if os.path.exists(path) and not force:
+                df = pd.read_csv(path)
+                print(f"\n{label}: using existing {path}")
+            else:
+                print(f"\nFetching {label} ...")
+                df = fetch(ds, s, e, area)
+                df.to_csv(path, index=False)
+            frames[label] = df
+            summarize(label, df)
+            if label.startswith("production_consumption"):
+                balance_check(df, label)
+        except Exception as exc:
+            print(f"\n=== {label} FAILED: {exc}")
+
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+
+        fig, ax = plt.subplots(1, 2, figsize=(13, 4))
+        pc = frames.get("production_consumption")
+        if pc is not None and not pc.empty:
+            pc = pc.assign(t=pd.to_datetime(pc["HourUTC"]), h=pd.to_datetime(pc["HourDK"]).dt.hour)
+            for area, g in pc.groupby("PriceArea"):
+                ax[0].plot(g["t"], g["GrossConsumptionMWh"], lw=0.5, label=area)
+                ax[1].plot(g.groupby("h")["GrossConsumptionMWh"].mean(), label=area)
+            ax[0].set_title("Gross consumption (MWh/h)")
+            ax[1].set_title("Average consumption by hour of day (Danish time)")
+            ax[0].legend()
+            ax[1].legend()
+        plt.tight_layout()
+        plt.savefig(f"{OUT}/overview.png", dpi=120)
+        print(f"\nSaved {OUT}/overview.png")
+    except Exception as exc:
+        print("Plot skipped:", exc)
+
+
+if __name__ == "__main__":
+    main()
