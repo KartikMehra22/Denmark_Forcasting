@@ -41,3 +41,18 @@ def load_area(area):
         raise ValueError('Missing prices in combined series')
     return s,audit
 
+def features(s):
+    x = pd.DataFrame(index=s.index)
+    # At 10:00 Copenhagen on D-1, the whole D-1 price curve is already known.
+    # Use D-2 and older curves so all features are safely available at this cutoff.
+    for lag in [48,72,168,336]:
+        x[f'lag_{lag}h'] = s.shift(lag)
+    for w in [24,168]:
+        x[f'mean_{w}h'] = s.shift(48).rolling(w).mean()
+    local = s.index.tz_convert('Europe/Copenhagen')
+    for name,values,period in [('hour',local.hour,24),('weekday',local.dayofweek,7),('year',local.dayofyear,365.25)]:
+        x[f'{name}_sin'] = np.sin(2*np.pi*values/period)
+        x[f'{name}_cos'] = np.cos(2*np.pi*values/period)
+    x['weekend'] = (local.dayofweek >= 5).astype(int)
+    return x
+
