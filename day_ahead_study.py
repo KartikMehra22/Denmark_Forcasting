@@ -56,3 +56,46 @@ def features(s):
     x['weekend'] = (local.dayofweek >= 5).astype(int)
     return x
 
+def run():
+    audits, predictions = {},[]
+    for area in ['DK1','DK2']:
+        s,audits[area] = load_area(area)
+        x = features(s)
+        valid = x.notna().all(axis=1)
+        localdates = s.index.tz_convert('Europe/Copenhagen').date
+        dates = sorted(set(localdates))
+        # Last 180 complete local delivery days; no random split or test tuning.
+        complete = [d for d in dates if len(s[localdates == d]) == int((pd.Timestamp(d,tz='Europe/Copenhagen')+pd.DateOffset(days=1)-pd.Timestamp(d,tz='Europe/Copenhagen')).total_seconds()/3600)]
+        for d in complete[-180:]:
+            delivery = pd.Timestamp(d,tz='Europe/Copenhagen')
+            issue = delivery-pd.DateOffset(days=1)+pd.Timedelta(hours=10)
+            test = (localdates == d) & valid
+            # Conservative: train only on completed historical delivery intervals.
+            train = valid & (s.index < issue.tz_convert('UTC').floor('D')) & (s.index >= issue-pd.Timedelta(days=730))
+            assert s.index[train].max() < issue
+            model = make_pipeline(StandardScaler(),Ridge(alpha=10.0))
+            model.fit(x.loc[train],s.loc[train])
+            pred = model.predict(x.loc[test])
+            frame = pd.DataFrame({'time_utc':s.index[test],'area':area,'issue_utc':issue.tz_convert('UTC'),
+                'actual':s.loc[test].values,'previous_day':s.shift(24).loc[test].values,
+                'previous_week':s.shift(168).loc[test].values,'ridge':pred})
+            # Latest lagged value used by ridge is >=48h before target, earlier than issue.
+            assert (frame.time_utc-pd.Timedelta(hours=48) < issue).all()
+            predictions.append(frame)
+        print(f'{area}: data audited; 180 delivery days evaluated',flush=True)
+    p = pd.concat(predictions,ignore_index=True)
+    p.to_csv(OUT/'hourly_predictions.csv',index=False)
+    metrics=[]
+    for area,g in p.groupby('area'):
+        for name in ['previous_day','previous_week','ridge']:
+            e=g[name]-g.actual
+            metrics.append(dict(area=area,model=name,n=len(g),MAE=float(e.abs().mean()),RMSE=float(np.sqrt((e**2).mean()))))
+    m=pd.DataFrame(metrics)
+    m.to_csv(OUT/'metrics.csv',index=False)
+    (OUT/'data_audit.json').write_text(json.dumps(audits,indent=2))
+    report = '''# Initial hourly price forecasting results\n\nOffline study using existing CSV extracts; no data refresh performed.\n\nForecast origin: 10:00 Europe/Copenhagen on the previous day. Target: next local delivery day, including 23/25-hour daylight-saving days. Recent quarter-hour prices are averaged to hourly prices.\n\nEvaluation: latest 180 complete delivery days in the extracts; daily ridge refit on up to 730 days of history. Ridge alpha fixed at 10, with no tuning on this evaluation period. Scaler fitted only on each training window. Baselines use yesterday and last week's matching UTC hour.\n\nPrices and errors are EUR/MWh.\n\n```\n'''+m.to_string(index=False)+'''\n```\n\nLimitations: this is an initial retrospective benchmark, not final held-out research evidence. No LightGBM, transformer, holidays, external forecasts or probabilistic models yet. The previous-day baseline is feasible only if the D-1 auction results are available by the chosen issue time; publication-time assumptions need confirmation. UTC lag baselines can shift relative to local hour at DST transitions. Input snapshots are not publication-vintage archives. Future model selection requires an earlier validation period and a separately reserved final test.\n'''
+    (OUT/'initial_report.md').write_text(report)
+    print(m.to_string(index=False))
+
+if __name__ == '__main__':
+    run()
