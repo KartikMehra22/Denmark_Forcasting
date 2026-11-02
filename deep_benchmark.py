@@ -28,3 +28,23 @@ def windows(s,dates):
         x.append(s.iloc[i-168:i].values);y.append(s.iloc[i:i+25].values);kept.append(d)
     return torch.tensor(np.array(x),dtype=torch.float32).unsqueeze(-1),torch.tensor(np.array(y),dtype=torch.float32).unsqueeze(-1),kept
 
+def train(x,y,epochs,validation=None):
+    torch.manual_seed(42)
+    model=PatchTSTForPrediction(PatchTSTConfig(**CONFIG))
+    opt=torch.optim.AdamW(model.parameters(),lr=0.001)
+    best=float('inf');best_epoch=1;log=[]
+    for epoch in range(1,epochs+1):
+        model.train(); losses=[]
+        for inds in torch.randperm(len(x)).split(32):
+            opt.zero_grad();loss=model(past_values=x[inds],future_values=y[inds]).loss
+            loss.backward();torch.nn.utils.clip_grad_norm_(model.parameters(),1);opt.step();losses.append(loss.item())
+        row={'epoch':epoch,'train_mse':float(np.mean(losses))}
+        if validation is not None:
+            vx,vy=validation;model.eval()
+            with torch.no_grad():v=model(past_values=vx).prediction_outputs
+            mae=(v-vy).abs().mean().item();row['validation_mae']=mae
+            if mae<best:best=mae;best_epoch=epoch
+        log.append(row)
+        print('PatchTST',row,flush=True)
+    return model,best_epoch,log
+
