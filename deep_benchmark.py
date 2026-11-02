@@ -19,3 +19,12 @@ CONFIG=dict(context_length=168,prediction_length=25,patch_length=16,patch_stride
  d_model=32,num_hidden_layers=2,num_attention_heads=4,ffn_dim=64,num_input_channels=1,
  scaling='std',loss='mse',head_dropout=0.1)
 
+def windows(s,dates):
+    x,y,kept=[],[],[]
+    for d in dates:
+        start=pd.Timestamp(d).tz_localize('Europe/Copenhagen').tz_convert('UTC')
+        i=s.index.get_indexer([start])[0]
+        if i<168 or i+25>len(s):continue
+        x.append(s.iloc[i-168:i].values);y.append(s.iloc[i:i+25].values);kept.append(d)
+    return torch.tensor(np.array(x),dtype=torch.float32).unsqueeze(-1),torch.tensor(np.array(y),dtype=torch.float32).unsqueeze(-1),kept
+
