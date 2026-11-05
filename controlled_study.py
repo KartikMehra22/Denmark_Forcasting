@@ -32,3 +32,17 @@ def samples(s,mode):
         out.append((d,start,x,y,n))
     return out
 
+def fitpatch(x,y,epochs,seed,config,val=None):
+    torch.manual_seed(seed);net=PatchTSTForPrediction(PatchTSTConfig(**config))
+    opt=torch.optim.AdamW(net.parameters(),lr=.001);best=(float('inf'),1);log=[]
+    X=torch.from_numpy(x).unsqueeze(-1);Y=torch.from_numpy(y).unsqueeze(-1)
+    for epoch in range(1,epochs+1):
+        net.train()
+        for ix in torch.randperm(len(X)).split(32):
+            opt.zero_grad();loss=net(past_values=X[ix],future_values=Y[ix]).loss;loss.backward()
+            torch.nn.utils.clip_grad_norm_(net.parameters(),1);opt.step()
+        if val:
+            vx,vy=val;pred=predictpatch(net,vx);mae=float(np.nanmean(abs(pred-vy)));log.append(mae)
+            if mae<best[0]:best=(mae,epoch)
+    return net,best[1],log
+
