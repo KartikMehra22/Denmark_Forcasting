@@ -14,3 +14,8 @@ from day_ahead_study import load_area
 OUT=ROOT/'results'/'controlled';OUT.mkdir(parents=True,exist_ok=True)
 torch.set_num_threads(2)
 
+def source(area,mode):
+    if mode=='hourly':return load_area(area)[0]
+    f=pd.read_csv(ROOT/'data'/f'dayahead_{area}.csv')
+    return pd.Series(f.DayAheadPriceEUR.values,index=pd.to_datetime(f.TimeUTC,utc=True)).sort_index()
+
