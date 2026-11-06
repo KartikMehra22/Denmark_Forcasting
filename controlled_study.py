@@ -46,3 +46,7 @@ def fitpatch(x,y,epochs,seed,config,val=None):
             if mae<best[0]:best=(mae,epoch)
     return net,best[1],log
 
+def predictpatch(net,x):
+    net.eval()
+    with torch.no_grad():return torch.cat([net(past_values=b.unsqueeze(-1)).prediction_outputs[:,:,0] for b in torch.from_numpy(x).split(32)]).numpy()
+
