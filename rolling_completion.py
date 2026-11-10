@@ -36,3 +36,7 @@ def lear_rows(s):
    rows[d]=(x,curve.loc[d].values)
  return rows
 
+def invariant(a):
+ med=np.median(a,axis=0);scale=np.median(abs(a-med),axis=0)/.6744897501960817;scale=np.where(scale>1e-8,scale,1.)
+ return np.arcsinh((a-med)/scale),med,scale
+
