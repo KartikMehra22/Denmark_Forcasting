@@ -26,3 +26,13 @@ def extended(a,mode):
  assert (out.index.to_series().diff().dropna()==step).all()
  return out
 
+def lear_rows(s):
+ local=s.index.tz_convert('Europe/Copenhagen');f=pd.DataFrame({'d':local.date,'h':local.hour,'p':s.values})
+ curve=f.pivot_table(index='d',columns='h',values='p',aggfunc='mean').reindex(columns=range(24)).interpolate(axis=1,limit_direction='both')
+ rows={}
+ for d in curve.index:
+  if all(d-timedelta(days=l) in curve.index for l in [1,2,3,7]):
+   x=np.array([curve.loc[d-timedelta(days=l),h] for h in range(24) for l in [1,2,3,7]]+[float(d.weekday()==w) for w in range(7)])
+   rows[d]=(x,curve.loc[d].values)
+ return rows
+
