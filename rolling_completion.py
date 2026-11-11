@@ -40,3 +40,14 @@ def invariant(a):
  med=np.median(a,axis=0);scale=np.median(abs(a-med),axis=0)/.6744897501960817;scale=np.where(scale>1e-8,scale,1.)
  return np.arcsinh((a-med)/scale),med,scale
 
+def lear_predict(rows,d):
+ days=[k for k in rows if d-timedelta(days=730)<=k<d-timedelta(days=1)]
+ x=np.stack([rows[k][0] for k in days]);y=np.stack([rows[k][1] for k in days])
+ xs,med,scale=invariant(x[:,:-7]);ys,ym,yscale=invariant(y)
+ xx=np.c_[xs,x[:,-7:]];test=np.r_[np.arcsinh((rows[d][0][:-7]-med)/scale),rows[d][0][-7:]][None,:]
+ pred=[]
+ for h in range(24):
+  alpha=LassoLarsIC(criterion='aic',max_iter=2500).fit(xx,ys[:,h]).alpha_
+  fit=Lasso(alpha=max(alpha,1e-10),max_iter=2500).fit(xx,ys[:,h]);pred.append(fit.predict(test)[0])
+ return np.sinh(np.array(pred))*yscale+ym
+
