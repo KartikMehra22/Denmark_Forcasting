@@ -1,0 +1,14 @@
+{
+ "locked_on":"2026-11-17",
+ "later_start":"2026-10-25",
+ "later_end_exclusive":"2026-11-17",
+ "later_status":"Uninspected later historical data; not a live prospective trial",
+ "refit":"Every 7 local delivery days; same dates for ridge, LightGBM and PatchTST",
+ "train_days":730,
+ "patchtst_epochs":10,
+ "patchtst_seed":42,
+ "ridge_alpha":{"hourly":100,"quarter_hour":10000},
+ "calibration":"Nonnegative CQR expansion from previous 60 delivery days, excluding D-1; finite-sample 80th percentile of pointwise max(lower-y,y-upper,0)",
+ "lear":"Hourly price-only LEAR: D-1,D-2,D-3,D-7 hourly curves, 7 weekday dummies, invariant scaling, AIC-selected LASSO per hour; daily refit",
+ "evaluation":"Do not retune after later-data errors are inspected; include all complete days available in requested range"
+}
