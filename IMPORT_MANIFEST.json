@@ -1,0 +1,474 @@
+{
+  "actual_import_time": "2026-11-18T23:17:51.783139+05:30",
+  "historical_author_dates_are_reconstructed": true,
+  "publication_scope": "code configuration and documentation only",
+  "stages": [
+    {
+      "stage": 1,
+      "reconstructed_author_date": "2026-10-26",
+      "message": "Document code-only import and reconstructed history",
+      "paths": [
+        "README.md",
+        "HISTORY_PROVENANCE.md",
+        ".gitignore"
+      ]
+    },
+    {
+      "stage": 2,
+      "reconstructed_author_date": "2026-10-26",
+      "message": "Record Python dependency versions",
+      "paths": [
+        "requirements-lock.txt"
+      ]
+    },
+    {
+      "stage": 3,
+      "reconstructed_author_date": "2026-10-26",
+      "message": "Import fetch_eds.py imports and configuration",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 4,
+      "reconstructed_author_date": "2026-10-27",
+      "message": "Import fetch_eds.py get implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 5,
+      "reconstructed_author_date": "2026-10-27",
+      "message": "Import fetch_eds.py fetch implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 6,
+      "reconstructed_author_date": "2026-10-28",
+      "message": "Import fetch_eds.py time_col implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 7,
+      "reconstructed_author_date": "2026-10-28",
+      "message": "Import fetch_eds.py summarize implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 8,
+      "reconstructed_author_date": "2026-10-28",
+      "message": "Import fetch_eds.py balance_check implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 9,
+      "reconstructed_author_date": "2026-10-29",
+      "message": "Import fetch_eds.py main implementation",
+      "paths": [
+        "fetch_eds.py"
+      ]
+    },
+    {
+      "stage": 10,
+      "reconstructed_author_date": "2026-10-29",
+      "message": "Import baselines.py imports and configuration",
+      "paths": [
+        "baselines.py"
+      ]
+    },
+    {
+      "stage": 11,
+      "reconstructed_author_date": "2026-10-30",
+      "message": "Import baselines.py read implementation",
+      "paths": [
+        "baselines.py"
+      ]
+    },
+    {
+      "stage": 12,
+      "reconstructed_author_date": "2026-10-30",
+      "message": "Import day_ahead_study.py imports and configuration",
+      "paths": [
+        "day_ahead_study.py"
+      ]
+    },
+    {
+      "stage": 13,
+      "reconstructed_author_date": "2026-10-31",
+      "message": "Import day_ahead_study.py load_area implementation",
+      "paths": [
+        "day_ahead_study.py"
+      ]
+    },
+    {
+      "stage": 14,
+      "reconstructed_author_date": "2026-10-31",
+      "message": "Import day_ahead_study.py features implementation",
+      "paths": [
+        "day_ahead_study.py"
+      ]
+    },
+    {
+      "stage": 15,
+      "reconstructed_author_date": "2026-10-31",
+      "message": "Import day_ahead_study.py run implementation",
+      "paths": [
+        "day_ahead_study.py"
+      ]
+    },
+    {
+      "stage": 16,
+      "reconstructed_author_date": "2026-11-01",
+      "message": "Import benchmark.py imports and configuration",
+      "paths": [
+        "benchmark.py"
+      ]
+    },
+    {
+      "stage": 17,
+      "reconstructed_author_date": "2026-11-01",
+      "message": "Import benchmark.py build implementation",
+      "paths": [
+        "benchmark.py"
+      ]
+    },
+    {
+      "stage": 18,
+      "reconstructed_author_date": "2026-11-02",
+      "message": "Import benchmark.py run implementation",
+      "paths": [
+        "benchmark.py"
+      ]
+    },
+    {
+      "stage": 19,
+      "reconstructed_author_date": "2026-11-02",
+      "message": "Import fit_lgb_worker.py entry point",
+      "paths": [
+        "fit_lgb_worker.py"
+      ]
+    },
+    {
+      "stage": 20,
+      "reconstructed_author_date": "2026-11-03",
+      "message": "Import deep_benchmark.py imports and configuration",
+      "paths": [
+        "deep_benchmark.py"
+      ]
+    },
+    {
+      "stage": 21,
+      "reconstructed_author_date": "2026-11-03",
+      "message": "Import deep_benchmark.py windows implementation",
+      "paths": [
+        "deep_benchmark.py"
+      ]
+    },
+    {
+      "stage": 22,
+      "reconstructed_author_date": "2026-11-03",
+      "message": "Import deep_benchmark.py train implementation",
+      "paths": [
+        "deep_benchmark.py"
+      ]
+    },
+    {
+      "stage": 23,
+      "reconstructed_author_date": "2026-11-04",
+      "message": "Import deep_benchmark.py run implementation",
+      "paths": [
+        "deep_benchmark.py"
+      ]
+    },
+    {
+      "stage": 24,
+      "reconstructed_author_date": "2026-11-04",
+      "message": "Import report_results.py entry point",
+      "paths": [
+        "report_results.py"
+      ]
+    },
+    {
+      "stage": 25,
+      "reconstructed_author_date": "2026-11-05",
+      "message": "Import verify_study.py entry point",
+      "paths": [
+        "verify_study.py"
+      ]
+    },
+    {
+      "stage": 26,
+      "reconstructed_author_date": "2026-11-05",
+      "message": "Import controlled_study.py imports and configuration",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 27,
+      "reconstructed_author_date": "2026-11-06",
+      "message": "Import controlled_study.py source implementation",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 28,
+      "reconstructed_author_date": "2026-11-06",
+      "message": "Import controlled_study.py samples implementation",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 29,
+      "reconstructed_author_date": "2026-11-06",
+      "message": "Import controlled_study.py fitpatch implementation",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 30,
+      "reconstructed_author_date": "2026-11-07",
+      "message": "Import controlled_study.py predictpatch implementation",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 31,
+      "reconstructed_author_date": "2026-11-07",
+      "message": "Import controlled_study.py run implementation",
+      "paths": [
+        "controlled_study.py"
+      ]
+    },
+    {
+      "stage": 32,
+      "reconstructed_author_date": "2026-11-08",
+      "message": "Import final_figures.py entry point",
+      "paths": [
+        "final_figures.py"
+      ]
+    },
+    {
+      "stage": 33,
+      "reconstructed_author_date": "2026-11-08",
+      "message": "Import verify_controlled.py entry point",
+      "paths": [
+        "verify_controlled.py"
+      ]
+    },
+    {
+      "stage": 34,
+      "reconstructed_author_date": "2026-11-09",
+      "message": "Import audit_study.py imports and configuration",
+      "paths": [
+        "audit_study.py"
+      ]
+    },
+    {
+      "stage": 35,
+      "reconstructed_author_date": "2026-11-09",
+      "message": "Import audit_study.py record implementation",
+      "paths": [
+        "audit_study.py"
+      ]
+    },
+    {
+      "stage": 36,
+      "reconstructed_author_date": "2026-11-09",
+      "message": "Import fetch_later.py entry point",
+      "paths": [
+        "fetch_later.py"
+      ]
+    },
+    {
+      "stage": 37,
+      "reconstructed_author_date": "2026-11-10",
+      "message": "Import rolling_completion.py imports and configuration",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 38,
+      "reconstructed_author_date": "2026-11-10",
+      "message": "Import rolling_completion.py extended implementation",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 39,
+      "reconstructed_author_date": "2026-11-11",
+      "message": "Import rolling_completion.py lear_rows implementation",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 40,
+      "reconstructed_author_date": "2026-11-11",
+      "message": "Import rolling_completion.py invariant implementation",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 41,
+      "reconstructed_author_date": "2026-11-12",
+      "message": "Import rolling_completion.py lear_predict implementation",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 42,
+      "reconstructed_author_date": "2026-11-12",
+      "message": "Import rolling_completion.py run implementation",
+      "paths": [
+        "rolling_completion.py"
+      ]
+    },
+    {
+      "stage": 43,
+      "reconstructed_author_date": "2026-11-12",
+      "message": "Import completion_summary.py entry point",
+      "paths": [
+        "completion_summary.py"
+      ]
+    },
+    {
+      "stage": 44,
+      "reconstructed_author_date": "2026-11-13",
+      "message": "Import verify_completion.py entry point",
+      "paths": [
+        "verify_completion.py"
+      ]
+    },
+    {
+      "stage": 45,
+      "reconstructed_author_date": "2026-11-13",
+      "message": "Import run_completion.py entry point",
+      "paths": [
+        "run_completion.py"
+      ]
+    },
+    {
+      "stage": 46,
+      "reconstructed_author_date": "2026-11-14",
+      "message": "Import archive_prospective_forecast.py entry point",
+      "paths": [
+        "archive_prospective_forecast.py"
+      ]
+    },
+    {
+      "stage": 47,
+      "reconstructed_author_date": "2026-11-14",
+      "message": "Preserve the locked experiment specification",
+      "paths": [
+        "completion_protocol.json"
+      ]
+    },
+    {
+      "stage": 48,
+      "reconstructed_author_date": "2026-11-15",
+      "message": "Provide model settings without research outputs",
+      "paths": [
+        "config/controlled_settings.json"
+      ]
+    },
+    {
+      "stage": 49,
+      "reconstructed_author_date": "2026-11-15",
+      "message": "Add a non-overwriting settings bootstrap",
+      "paths": [
+        "tools/bootstrap_settings.py"
+      ]
+    },
+    {
+      "stage": 50,
+      "reconstructed_author_date": "2026-11-15",
+      "message": "Document data acquisition and snapshot requirements",
+      "paths": [
+        "docs/DATA_SETUP.md"
+      ]
+    },
+    {
+      "stage": 51,
+      "reconstructed_author_date": "2026-11-16",
+      "message": "Document commands for running the model comparisons",
+      "paths": [
+        "docs/REPRODUCING.md"
+      ]
+    },
+    {
+      "stage": 52,
+      "reconstructed_author_date": "2026-11-16",
+      "message": "Document methodological limits and evaluation scope",
+      "paths": [
+        "docs/LIMITATIONS.md"
+      ]
+    },
+    {
+      "stage": 53,
+      "reconstructed_author_date": "2026-11-17",
+      "message": "Record primary dataset and model implementation sources",
+      "paths": [
+        "docs/SOURCES.md",
+        "docs/PROSPECTIVE_EVALUATION.md"
+      ]
+    },
+    {
+      "stage": 54,
+      "reconstructed_author_date": "2026-11-17",
+      "message": "Publish the current code-only research guide",
+      "paths": [
+        "README.md"
+      ]
+    }
+  ],
+  "file_sha256": {
+    "controlled_study.py": "5bf568685516b07f8e89f9f83a537f62b8c329f7d79501f6464eed56fcf49b8b",
+    "audit_study.py": "54422583574bead35aca5175157a5052ed5d3a07af20311955fff9656ad4c144",
+    "baselines.py": "100fdf0e64c240385785b27a47518bde093aa6480e1617cc8ab251f71b7ce68f",
+    "benchmark.py": "3532f30bca5ef582aafbf28179e5b040e32676b31623163a3337a73c7eac1c9a",
+    "fetch_later.py": "22d16c6a37c5b1a016e4c4a93cc34d9f537c3e635d48b455f05901350d6fb517",
+    "completion_protocol.json": "4c1c0a94b064313f98d9c70705a6d04a5ee5bdc5bb2a72cbc124069eeedd4734",
+    "rolling_completion.py": "c6174f33557e546f4a2efb188fbe3dbf01017d5ec508e154cff170edf26cefcc",
+    "fetch_eds.py": "865f5229c6da032437d886e9ea9e742df3c752acb89356cb1b758fb5336de65d",
+    "final_figures.py": "5c6b57c18fc253ae541ff51676609227b3fef2a6406dd08f8511fb2148bb474c",
+    "run_completion.py": "af8be53e350e8e39752e533ccde6b0768561729ee8a8056e9e559f05c03998f2",
+    "day_ahead_study.py": "e173bce46a71a78d1df296a05e6f3fad2d2c51e6539e5895ec411401df7d3e98",
+    "verify_study.py": "1e359c7d74afa53bd4bddd74fc05d1e61be06976c13ddfb415818b80b3c8d9c0",
+    "README.md": "08e483650336334cf59f14638755690a88bbd5c62d2165f03bfd934383d2d5cb",
+    "deep_benchmark.py": "5f9d60c12c33664b972b80e3ea63286a524f0f5bc3df6b070ce914a898421f2f",
+    "completion_summary.py": "b97330b822d9926bf62118c4e6f5eaf269bedb1510f6f906a9b65df3b28f6c5e",
+    "verify_controlled.py": "3b1fd0af872bf4f75efcbced1b86f042cc62d408f9f03f3b571c6ba9935d179c",
+    ".gitignore": "9ba0f5fe7f3baf6d6f3180e30dd5eae1be47516f64020eaf37f702ee84707639",
+    "HISTORY_PROVENANCE.md": "e94ee624221674e2ddae539e90d6d10fdba876a6b82e58a0d92c423d972cc080",
+    "report_results.py": "c52219477ae7d126801808d1644592ded0b85716c241410bfee3269128c2f72c",
+    "verify_completion.py": "ca1b7a65cee5c3f80e734759a038a0ec5341a586a71056953b1a485b79dabef3",
+    "archive_prospective_forecast.py": "2068f62ca1e5e9bbd975e677634f5968794ce0b37e27d0efbcc0734a744e43c7",
+    "fit_lgb_worker.py": "ec058bf825fb6cd3705f792bff7ac71fb315f242d2bc9fe1290b691370f667fd",
+    "requirements-lock.txt": "7cce7ea389f5a0faf4d281e9568f6cbd8f1bb3661d399ebc0ae6d6cadba0600e",
+    "tools/bootstrap_settings.py": "52af939556bbb5ca6a20037c8c6f86e305d3476837237c271a36719aa83f1a46",
+    "config/controlled_settings.json": "699391c54fc26c77852a331eee483ebe8e4a06944756c815bfb878ebf0eec684",
+    "docs/PROSPECTIVE_EVALUATION.md": "61ecb4ffa519986f6da2ee11f71974e16a749651b78f1cd60c63bd9d0b69f162",
+    "docs/DATA_SETUP.md": "0b6a4659aad902de4e2921c621a40f65b010bc1669d767894dca719929ed14ad",
+    "docs/LIMITATIONS.md": "19a3a59969f670383c83977ac26a7e3248d8fbd90c64097872cbd91da5211121",
+    "docs/SOURCES.md": "ab70f5d4340f4b87b2afef78217dbabcca142d46ce75ef773bf43a8f66ef41a2",
+    "docs/REPRODUCING.md": "95aaf637c358e8b91e2c100a530944e225174ecf13a0384a49065c1e229727a1"
+  }
+}
