@@ -1,6 +1,6 @@
 from pathlib import Path
 import requests,json,hashlib,time
-ROOT=Path(__file__).resolve().parent;D=ROOT/'data/later_locked';D.mkdir(exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1];D=ROOT/'data/later_locked';D.mkdir(exist_ok=True)
 p=json.loads((ROOT/'completion_protocol.json').read_text());manifest={}
 for a in ['DK1','DK2']:
  params={'start':p['later_start'],'end':p['later_end_exclusive'],'filter':json.dumps({'PriceArea':[a]}),'limit':10000,'sort':'TimeUTC asc'}

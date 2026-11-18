@@ -13,7 +13,7 @@ from lightgbm import LGBMRegressor
 import holidays
 from day_ahead_study import load_area
 
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'results'/'benchmark_v2'
 OUT.mkdir(parents=True,exist_ok=True)
 HOLIDAYS=holidays.Denmark(years=range(2021,2028))

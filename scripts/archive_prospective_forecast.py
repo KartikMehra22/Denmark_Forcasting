@@ -19,7 +19,7 @@ if not required<=set(f):raise SystemExit('Required columns: '+', '.join(sorted(r
 f.time_utc=pd.to_datetime(f.time_utc,utc=True)
 if not (f.time_utc.dt.tz_convert('Europe/Copenhagen').dt.date==delivery.date()).all():raise SystemExit('Delivery timestamps fall outside the declared delivery day.')
 if not np.isfinite(f.prediction).all() or f.duplicated(['time_utc','area','model']).any():raise SystemExit('Invalid or duplicate forecast values.')
-root=Path(__file__).resolve().parent/'results/prospective'/a.delivery_date;root.mkdir(parents=True,exist_ok=True)
+root=Path(__file__).resolve().parents[1]/'results/prospective'/a.delivery_date;root.mkdir(parents=True,exist_ok=True)
 dest=root/'forecast.csv'
 if dest.exists():raise SystemExit('Archive exists: forecasts cannot overwrite an earlier prospective record.')
 raw=f.to_csv(index=False).encode();dest.write_bytes(raw)

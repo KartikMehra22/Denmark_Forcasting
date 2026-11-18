@@ -1,6 +1,6 @@
 from pathlib import Path
 import json,os
-ROOT=Path(__file__).resolve().parent;O=ROOT/'results/completion'
+ROOT=Path(__file__).resolve().parents[1];O=ROOT/'results/completion'
 os.environ['MPLCONFIGDIR']=str(ROOT/'.cache/matplotlib')
 import numpy as np,pandas as pd,matplotlib
 matplotlib.use('Agg')

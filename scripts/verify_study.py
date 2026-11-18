@@ -2,7 +2,7 @@
 from pathlib import Path
 import pandas as pd
 from day_ahead_study import load_area
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 for area in ['DK1','DK2']:
     s,audit=load_area(area)
     assert all(a['missing_intervals']==0 and a['missing_prices']==0 for a in audit)

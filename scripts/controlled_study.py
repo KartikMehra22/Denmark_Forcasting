@@ -2,7 +2,7 @@
 from pathlib import Path
 from datetime import timedelta
 import os,json,hashlib
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 os.environ['HF_HOME']=str(ROOT/'.cache'/'huggingface');os.environ['HF_HUB_DISABLE_TELEMETRY']='1'
 import numpy as np,pandas as pd,torch
 from sklearn.pipeline import make_pipeline
@@ -76,7 +76,7 @@ def run():
         import subprocess,sys
         temp=OUT/f'{mode}_{area}_fit.npz';dest=OUT/f'{mode}_{area}_lgb.npy'
         np.savez(temp,x=fx,y=fy,ex=ex)
-        subprocess.run([sys.executable,str(ROOT/'fit_lgb_worker.py'),str(temp),str(dest)],check=True)
+        subprocess.run([sys.executable,str(ROOT/'scripts'/'fit_lgb_worker.py'),str(temp),str(dest)],check=True)
         pred['lightgbm']=np.load(dest)
         print('lightgbm done',flush=True)
         steps=1 if mode=='hourly' else 4;c=168*steps;h=25*steps

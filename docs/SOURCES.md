@@ -7,4 +7,4 @@
 - Chronos implementation: https://github.com/amazon-science/chronos-forecasting
 - LightGBM documentation: https://lightgbm.readthedocs.io/en/stable/Python-API.html
 
-The project reimplements the price-only LEAR procedure in rolling_completion.py. Downloaded third-party reference source files are not included in this repository. No new license is asserted over third-party data or dependencies.
+The project reimplements the price-only LEAR procedure in scripts/rolling_completion.py. Downloaded third-party reference source files are not included in this repository. No new license is asserted over third-party data or dependencies.

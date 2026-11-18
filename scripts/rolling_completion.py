@@ -2,7 +2,7 @@
 from pathlib import Path
 from datetime import timedelta
 import os,json,sys,subprocess
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 os.environ['HF_HOME']=str(ROOT/'.cache/huggingface');os.environ['HF_HUB_DISABLE_TELEMETRY']='1'
 import numpy as np,pandas as pd,torch
 from sklearn.pipeline import make_pipeline
@@ -79,7 +79,7 @@ def run():
     latest=max(r[1]+(h-1)*step for r in train);assert latest<issue
     ridge=make_pipeline(StandardScaler(),Ridge(alpha=CFG['ridge_alpha'][mode],solver='svd'));ridge.fit(x,y);rp=ridge.predict(ex)
     tmp=O/f'{mode}_{a}_worker.npz';dest=O/f'{mode}_{a}_worker.npy';np.savez(tmp,x=x,y=y,ex=ex)
-    subprocess.run([sys.executable,str(ROOT/'fit_lgb_worker.py'),str(tmp),str(dest)],check=True);lp=np.load(dest)
+    subprocess.run([sys.executable,str(ROOT/'scripts'/'fit_lgb_worker.py'),str(tmp),str(dest)],check=True);lp=np.load(dest)
     net,_,_=fitpatch(x,y,10,42,conf);pp=predictpatch(net,ex)
     # Persist each fitted checkpoint for genuine reuse and forecasting.
     import joblib
