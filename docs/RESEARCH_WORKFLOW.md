@@ -1,6 +1,6 @@
 # Day-ahead forecasting: research workflow and file guide
 
-This guide maps the work to the supervisor's requests and explains how the data, experiments and results fit together. It describes the current local research workspace. The Git repository contains code and configuration; the `data/`, `results/` and `reports/` directories are ignored and must be supplied separately. An archived reproducibility package was prepared before the follow-up scripts were moved into `scripts/followup/`; commands within that archived snapshot use its original layout.
+This guide maps the work to the supervisor's requests and explains how the data, experiments and results fit together. It describes the current local research workspace. The Git repository contains code and configuration; the `data/`, `results/` and `reports/` directories are ignored and must be supplied separately. Earlier reproducibility archives were prepared before the follow-up scripts were moved into `scripts/followup/`; use the commands in each archive’s own README for its layout.
 
 ## 1. Scope and status
 

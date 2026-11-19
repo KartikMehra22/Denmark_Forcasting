@@ -23,4 +23,4 @@ python scripts/followup/supervisor_spring_analysis.py
 python scripts/followup/supervisor_tune_lgb_analysis.py
 ```
 
-The winter, spring and tuned-LightGBM forecasting scripts refit many models and write to `results/supervisor_response/`. The script map and full interpretation limits are in the [workflow guide](RESEARCH_WORKFLOW.md). The separately archived reproducibility package captures the code layout before the follow-up scripts were moved into `scripts/followup/`; use the paths in that package's own README when working from the archive.
+The winter, spring and tuned-LightGBM forecasting scripts refit many models and write to `results/supervisor_response/`. The script map and full interpretation limits are in the [workflow guide](RESEARCH_WORKFLOW.md). Earlier reproducibility archives capture the code layout before the follow-up scripts were moved into `scripts/followup/`. Use the paths in each archive’s own README when working from an archive.
