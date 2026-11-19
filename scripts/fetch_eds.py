@@ -6,6 +6,7 @@ Needs: pip install requests pandas matplotlib
 Output: CSVs and overview.png in ./data/
 The script waits between requests and retries on HTTP 429 (rate limit), so it can take a few minutes.
 """
+
 import json
 import os
 import sys
@@ -28,16 +29,27 @@ def get(url, params):
             time.sleep(wait)
         try:
             r = requests.get(url, params=params, timeout=300)
-        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as exc:
-            delay = min(10 * 2 ** attempt, 120)
-            print(f"  network error ({type(exc).__name__}); waiting {delay}s (attempt {attempt + 1}/8)")
+        except (
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectionError,
+        ) as exc:
+            delay = min(10 * 2**attempt, 120)
+            print(
+                f"  network error ({type(exc).__name__}); waiting {delay}s (attempt {attempt + 1}/8)"
+            )
             time.sleep(delay)
             continue
         _last[0] = time.time()
         if r.status_code in (429, 500, 502, 503, 504):
             ra = r.headers.get("Retry-After", "")
-            delay = float(ra) if ra.replace(".", "", 1).isdigit() else min(10 * 2 ** attempt, 120)
-            print(f"  HTTP {r.status_code}; waiting {delay:.0f}s (attempt {attempt + 1}/8)")
+            delay = (
+                float(ra)
+                if ra.replace(".", "", 1).isdigit()
+                else min(10 * 2**attempt, 120)
+            )
+            print(
+                f"  HTTP {r.status_code}; waiting {delay:.0f}s (attempt {attempt + 1}/8)"
+            )
             time.sleep(delay)
             continue
         r.raise_for_status()
@@ -81,15 +93,32 @@ def summarize(name, df):
             step = g["_t"].sort_values().diff().dropna()
             mode = step.mode().iloc[0] if len(step) else "n/a"
             gaps = int((step > mode).sum()) if len(step) else 0
-            print(f"  {area}: {len(g)} rows, step {mode}, gaps larger than step: {gaps}")
+            print(
+                f"  {area}: {len(g)} rows, step {mode}, gaps larger than step: {gaps}"
+            )
     miss = df.isna().sum()
-    print("columns with missing values:\n", miss[miss > 0].to_string() if (miss > 0).any() else " none")
+    print(
+        "columns with missing values:\n",
+        miss[miss > 0].to_string() if (miss > 0).any() else " none",
+    )
 
 
-PROD = ["CentralPowerMWh", "LocalPowerMWh", "CommercialPowerMWh", "OffshoreWindLt100MW_MWh",
-        "OffshoreWindGe100MW_MWh", "OnshoreWindLt50kW_MWh", "OnshoreWindGe50kW_MWh", "HydroPowerMWh",
-        "SolarPowerLt10kW_MWh", "SolarPowerGe10Lt40kW_MWh", "SolarPowerGe40kW_MWh",
-        "SolarPowerSelfConMWh", "UnknownProdMWh", "LocalPowerSelfConMWh"]
+PROD = [
+    "CentralPowerMWh",
+    "LocalPowerMWh",
+    "CommercialPowerMWh",
+    "OffshoreWindLt100MW_MWh",
+    "OffshoreWindGe100MW_MWh",
+    "OnshoreWindLt50kW_MWh",
+    "OnshoreWindGe50kW_MWh",
+    "HydroPowerMWh",
+    "SolarPowerLt10kW_MWh",
+    "SolarPowerGe10Lt40kW_MWh",
+    "SolarPowerGe40kW_MWh",
+    "SolarPowerSelfConMWh",
+    "UnknownProdMWh",
+    "LocalPowerSelfConMWh",
+]
 
 
 def balance_check(df, label):
@@ -100,12 +129,16 @@ def balance_check(df, label):
     prod = [c for c in PROD if c in df.columns]
     exch = [c for c in df.columns if c.startswith("Exchange")]
     d = df.copy()
-    d["resid"] = d["GrossConsumptionMWh"] - (d[prod].fillna(0).sum(axis=1) + d[exch].fillna(0).sum(axis=1))
+    d["resid"] = d["GrossConsumptionMWh"] - (
+        d[prod].fillna(0).sum(axis=1) + d[exch].fillna(0).sum(axis=1)
+    )
     print(f"\n--- Energy balance check: {label} ---")
     for area, g in d.groupby("PriceArea"):
         a = g["resid"].abs()
-        print(f"  {area}: |residual| median {a.median():.4f}, 99th pct {a.quantile(.99):.4f}, "
-              f"max {a.max():.4f} MWh; hours with |residual| < 0.01: {(a < 0.01).mean():.1%}")
+        print(
+            f"  {area}: |residual| median {a.median():.4f}, 99th pct {a.quantile(.99):.4f}, "
+            f"max {a.max():.4f} MWh; hours with |residual| < 0.01: {(a < 0.01).mean():.1%}"
+        )
 
 
 def main():
@@ -113,12 +146,36 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     now = pd.Timestamp.now().strftime("%Y-%m-%dT00:00")
     jobs = [  # (label, dataset, start, end, price_area)
-        ("production_consumption", "ProductionConsumptionSettlement", "2025-10-01T00:00", now, None),
-        ("production_consumption_history", "ProductionConsumptionSettlement", "2022-01-01T00:00", "2025-10-01T00:00", None),
+        (
+            "production_consumption",
+            "ProductionConsumptionSettlement",
+            "2025-10-01T00:00",
+            now,
+            None,
+        ),
+        (
+            "production_consumption_history",
+            "ProductionConsumptionSettlement",
+            "2022-01-01T00:00",
+            "2025-10-01T00:00",
+            None,
+        ),
         ("dayahead_DK1", "DayAheadPrices", "2025-10-01T00:00", now, "DK1"),
         ("dayahead_DK2", "DayAheadPrices", "2025-10-01T00:00", now, "DK2"),
-        ("elspot_DK1_history", "Elspotprices", "2022-01-01T00:00", "2025-10-01T00:00", "DK1"),
-        ("elspot_DK2_history", "Elspotprices", "2022-01-01T00:00", "2025-10-01T00:00", "DK2"),
+        (
+            "elspot_DK1_history",
+            "Elspotprices",
+            "2022-01-01T00:00",
+            "2025-10-01T00:00",
+            "DK1",
+        ),
+        (
+            "elspot_DK2_history",
+            "Elspotprices",
+            "2022-01-01T00:00",
+            "2025-10-01T00:00",
+            "DK2",
+        ),
     ]
     frames = {}
     for label, ds, s, e, area in jobs:
@@ -140,13 +197,16 @@ def main():
 
     try:
         import matplotlib
+
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
 
         fig, ax = plt.subplots(1, 2, figsize=(13, 4))
         pc = frames.get("production_consumption")
         if pc is not None and not pc.empty:
-            pc = pc.assign(t=pd.to_datetime(pc["HourUTC"]), h=pd.to_datetime(pc["HourDK"]).dt.hour)
+            pc = pc.assign(
+                t=pd.to_datetime(pc["HourUTC"]), h=pd.to_datetime(pc["HourDK"]).dt.hour
+            )
             for area, g in pc.groupby("PriceArea"):
                 ax[0].plot(g["t"], g["GrossConsumptionMWh"], lw=0.5, label=area)
                 ax[1].plot(g.groupby("h")["GrossConsumptionMWh"].mean(), label=area)

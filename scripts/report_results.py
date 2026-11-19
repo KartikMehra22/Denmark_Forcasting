@@ -1,55 +1,112 @@
 from pathlib import Path
 import os
-ROOT=Path(__file__).resolve().parents[1]
-os.environ['MPLCONFIGDIR']=str(ROOT/'.cache'/'matplotlib')
+
+ROOT = Path(__file__).resolve().parents[1]
+os.environ["MPLCONFIGDIR"] = str(ROOT / ".cache" / "matplotlib")
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-OUT=ROOT/'results'/'benchmark_v2'
-p=pd.read_csv(OUT/'all_model_predictions.csv',parse_dates=['time_utc'])
-m=pd.read_csv(OUT/'all_model_metrics.csv')
-models=['previous_day','previous_week','ridge','lightgbm','patchtst','chronos_bolt_tiny']
-fig,axs=plt.subplots(1,2,figsize=(12,5),layout='constrained')
-for ax,area in zip(axs,['DK1','DK2']):
-    g=m[m.area==area].sort_values('MAE',ascending=False)
-    ax.barh(g.model,g.MAE,color=['#158a8a' if x=='lightgbm' else '#8194ae' for x in g.model])
-    ax.set(title=area,xlabel='MAE (EUR/MWh)')
-fig.suptitle('Hourly day-ahead prices: exploratory 180-day comparison')
-fig.savefig(OUT/'model_comparison.png',dpi=160);plt.close(fig)
-fig,axs=plt.subplots(2,1,figsize=(13,7),layout='constrained')
-for ax,area in zip(axs,['DK1','DK2']):
-    g=p[(p.area==area)&(p.time_utc>=p.time_utc.max()-pd.Timedelta(days=7))]
-    for col,label,c in [('actual','Actual','#172b4d'),('lightgbm','LightGBM','#168a8a'),('chronos_bolt_tiny','Chronos-Bolt tiny','#d98835')]:
-        ax.plot(g.time_utc,g[col],label=label,color=c,lw=1.2)
-    ax.set(title=area,ylabel='EUR/MWh');ax.legend(ncol=3)
-fig.suptitle('Last seven delivery days in the existing extract')
-fig.savefig(OUT/'forecast_example.png',dpi=160);plt.close(fig)
-regimes=[]
-for area,g in p.groupby('area'):
-    threshold=g.actual.quantile(.95)
-    for label,mask in [('all',np.ones(len(g),dtype=bool)),('negative',g.actual<0),('upper_5pct',g.actual>=threshold)]:
+
+OUT = ROOT / "results" / "benchmark_v2"
+p = pd.read_csv(OUT / "all_model_predictions.csv", parse_dates=["time_utc"])
+m = pd.read_csv(OUT / "all_model_metrics.csv")
+models = [
+    "previous_day",
+    "previous_week",
+    "ridge",
+    "lightgbm",
+    "patchtst",
+    "chronos_bolt_tiny",
+]
+fig, axs = plt.subplots(1, 2, figsize=(12, 5), layout="constrained")
+for ax, area in zip(axs, ["DK1", "DK2"]):
+    g = m[m.area == area].sort_values("MAE", ascending=False)
+    ax.barh(
+        g.model,
+        g.MAE,
+        color=["#158a8a" if x == "lightgbm" else "#8194ae" for x in g.model],
+    )
+    ax.set(title=area, xlabel="MAE (EUR/MWh)")
+fig.suptitle("Hourly day-ahead prices: exploratory 180-day comparison")
+fig.savefig(OUT / "model_comparison.png", dpi=160)
+plt.close(fig)
+fig, axs = plt.subplots(2, 1, figsize=(13, 7), layout="constrained")
+for ax, area in zip(axs, ["DK1", "DK2"]):
+    g = p[(p.area == area) & (p.time_utc >= p.time_utc.max() - pd.Timedelta(days=7))]
+    for col, label, c in [
+        ("actual", "Actual", "#172b4d"),
+        ("lightgbm", "LightGBM", "#168a8a"),
+        ("chronos_bolt_tiny", "Chronos-Bolt tiny", "#d98835"),
+    ]:
+        ax.plot(g.time_utc, g[col], label=label, color=c, lw=1.2)
+    ax.set(title=area, ylabel="EUR/MWh")
+    ax.legend(ncol=3)
+fig.suptitle("Last seven delivery days in the existing extract")
+fig.savefig(OUT / "forecast_example.png", dpi=160)
+plt.close(fig)
+regimes = []
+for area, g in p.groupby("area"):
+    threshold = g.actual.quantile(0.95)
+    for label, mask in [
+        ("all", np.ones(len(g), dtype=bool)),
+        ("negative", g.actual < 0),
+        ("upper_5pct", g.actual >= threshold),
+    ]:
         for model in models:
-            e=g.loc[mask,model]-g.loc[mask,'actual']
-            regimes.append(dict(area=area,regime=label,model=model,n=len(e),MAE=e.abs().mean(),RMSE=np.sqrt((e**2).mean())))
-pd.DataFrame(regimes).to_csv(OUT/'regime_metrics.csv',index=False)
+            e = g.loc[mask, model] - g.loc[mask, "actual"]
+            regimes.append(
+                dict(
+                    area=area,
+                    regime=label,
+                    model=model,
+                    n=len(e),
+                    MAE=e.abs().mean(),
+                    RMSE=np.sqrt((e**2).mean()),
+                )
+            )
+pd.DataFrame(regimes).to_csv(OUT / "regime_metrics.csv", index=False)
 # Paired moving-block bootstrap of daily MAE improvement; uncertainty is descriptive.
-rng=np.random.default_rng(42);intervals=[]
-for area,g in p.groupby('area'):
-    daily=g.groupby('date').apply(lambda x:pd.Series({model:(x[model]-x.actual).abs().mean() for model in models}),include_groups=False)
-    for model in ['ridge','lightgbm','patchtst','chronos_bolt_tiny']:
-        delta=(daily.previous_day-daily[model]).to_numpy();n=len(delta)
-        means=[]
+rng = np.random.default_rng(42)
+intervals = []
+for area, g in p.groupby("area"):
+    daily = g.groupby("date").apply(
+        lambda x: pd.Series(
+            {model: (x[model] - x.actual).abs().mean() for model in models}
+        ),
+        include_groups=False,
+    )
+    for model in ["ridge", "lightgbm", "patchtst", "chronos_bolt_tiny"]:
+        delta = (daily.previous_day - daily[model]).to_numpy()
+        n = len(delta)
+        means = []
         for _ in range(2000):
-            starts=rng.integers(0,n,size=int(np.ceil(n/7)))
-            idx=np.concatenate([(np.arange(k,k+7)%n) for k in starts])[:n]
+            starts = rng.integers(0, n, size=int(np.ceil(n / 7)))
+            idx = np.concatenate([(np.arange(k, k + 7) % n) for k in starts])[:n]
             means.append(delta[idx].mean())
-        lo,hi=np.quantile(means,[.025,.975]);intervals.append(dict(area=area,model=model,daily_MAE_reduction=delta.mean(),low95=lo,high95=hi))
-pd.DataFrame(intervals).to_csv(OUT/'daily_error_bootstrap.csv',index=False)
-rows=['| Zone | Model | MAE | RMSE | MAE improvement vs yesterday |','|---|---|---:|---:|---:|']
-for r in m.itertuples():rows.append(f'| {r.area} | {r.model} | {r.MAE:.2f} | {r.RMSE:.2f} | {r.improvement_pct:.1f}% |')
-text='''# Denmark day-ahead price forecasting — initial research results
+        lo, hi = np.quantile(means, [0.025, 0.975])
+        intervals.append(
+            dict(
+                area=area,
+                model=model,
+                daily_MAE_reduction=delta.mean(),
+                low95=lo,
+                high95=hi,
+            )
+        )
+pd.DataFrame(intervals).to_csv(OUT / "daily_error_bootstrap.csv", index=False)
+rows = [
+    "| Zone | Model | MAE | RMSE | MAE improvement vs yesterday |",
+    "|---|---|---:|---:|---:|",
+]
+for r in m.itertuples():
+    rows.append(
+        f"| {r.area} | {r.model} | {r.MAE:.2f} | {r.RMSE:.2f} | {r.improvement_pct:.1f}% |"
+    )
+text = (
+    """# Denmark day-ahead price forecasting — initial research results
 
 Prepared 2 November 2026. All numbers were computed locally from the existing Energinet CSV extracts; no new price data has been downloaded.
 
@@ -77,7 +134,9 @@ Per zone: 32,855 historical hourly prices and 37,344 quarter-hour prices. No mis
 
 ## Results (EUR/MWh)
 
-'''+ '\n'.join(rows)+'''
+"""
+    + "\n".join(rows)
+    + """
 
 ![Model comparison](model_comparison.png)
 
@@ -108,6 +167,7 @@ Lock the initial specification and obtain a prospective evaluation period; compa
 From the Denmark project: `.venv/bin/python benchmark.py`, `.venv/bin/python deep_benchmark.py`, `.venv/bin/python verify_study.py`, `.venv/bin/python report_results.py`.
 
 Sources: [Energinet price metadata](https://api.energidataservice.dk/meta/dataset/Elspotprices), [LightGBM](https://lightgbm.readthedocs.io/en/stable/Python-API.html), [PatchTST](https://github.com/yuqinie98/PatchTST), [Chronos](https://github.com/amazon-science/chronos-forecasting).
-'''
-(OUT/'research_report.md').write_text(text)
-print('Report, charts, regime metrics and bootstrap intervals saved.')
+"""
+)
+(OUT / "research_report.md").write_text(text)
+print("Report, charts, regime metrics and bootstrap intervals saved.")
