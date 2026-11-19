@@ -1,9 +1,26 @@
 # Reproducing the implementation
 
-Use Python 3.12 and a dedicated virtual environment. Install requirements-lock.txt. Restore the required raw CSVs as described in DATA_SETUP.md. On a fresh checkout run python tools/bootstrap_settings.py once to install the model-only configuration in its expected location. Existing configurations are never overwritten.
+The [research workflow and file guide](RESEARCH_WORKFLOW.md) maps each experiment and supervisor request to its code, settings, data and outputs. This page gives the basic setup.
 
-The latest pipeline is python scripts/run_completion.py. For the first Chronos checkpoint download use DENMARK_ALLOW_MODEL_DOWNLOAD=1 python scripts/run_completion.py. It includes later data retrieval, rolling training, result summaries and independent verification. Model fitting can take around 20 minutes on the original machine.
+Use Python 3.12 and a dedicated virtual environment:
 
-Individual steps are scripts/fetch_later.py, scripts/rolling_completion.py, scripts/completion_summary.py and scripts/verify_completion.py. They write to untracked results/completion/.
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-lock.txt -r requirements-supervisor.txt
+python -m pip check
+```
 
-Earlier alternatives are scripts/benchmark.py, scripts/deep_benchmark.py, scripts/controlled_study.py and scripts/final_figures.py. scripts/audit_study.py additionally requires saved original provenance and validation records, not just the model-only settings file. Exact numerical reproduction requires frozen data and the original full configuration artifacts.
+Restore the frozen raw inputs and saved artifacts described in [data setup](DATA_SETUP.md). Data, forecasts, model files and other results are ignored by Git. On a fresh code checkout, `python tools/bootstrap_settings.py` installs the model-only configuration without overwriting an existing configuration. Exact reproduction of the saved study additionally requires its frozen data and full configuration artifacts.
+
+The original rolling pipeline is `python scripts/run_completion.py`. Its first Chronos download can be enabled with `DENMARK_ALLOW_MODEL_DOWNLOAD=1`; alternatively restore the pinned local model cache from the reproducibility package. The pipeline writes to `results/completion/` and can take substantial time. Preserve the frozen artifacts before running it.
+
+Follow-up checks and summaries are run from the project root:
+
+```sh
+python scripts/followup/supervisor_verify.py
+python scripts/followup/supervisor_spring_analysis.py
+python scripts/followup/supervisor_tune_lgb_analysis.py
+```
+
+The winter, spring and tuned-LightGBM forecasting scripts refit many models and write to `results/supervisor_response/`. The script map and full interpretation limits are in the [workflow guide](RESEARCH_WORKFLOW.md). The separately archived reproducibility package captures the code layout before the follow-up scripts were moved into `scripts/followup/`; use the paths in that package's own README when working from the archive.
